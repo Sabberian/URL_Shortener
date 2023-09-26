@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Link Shortener</title>
+</head>
+<body>
+    <h1>Link Shortener</h1>
+    <form id="shorten-form">
+        <label for="longURL">Long URL:</label>
+        <input type="text" id="longURL" name="longURL" required><br>
+        <label for="customName">Custom URL Name (optional):</label>
+        <input type="text" id="customName" name="customName"><br>
+
+        <input type="submit" value="Shorten">
+    </form>
+
+    <div id="result">
+        <!-- Результат будет отображаться здесь -->
+    </div>
+
+    <script>
+        document.getElementById("shorten-form").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+
+            fetch("/shorten", {
+                method: "POST",
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById("result");
+                if (data.error) {
+                    resultDiv.innerHTML = `<p>Error: ${data.error}</p>`;
+                } else {
+                    //localhost
+                    resultDiv.innerHTML = `<p>Shortened URL: <a href="${data.shortURL}">localhost:8080/${data.shortURL}</a></p>`;
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        });
+    </script>
+</body>
+</html>
